@@ -1,0 +1,40 @@
+# .travis.yml
+language: java
+branches:
+  only:
+    - master
+    - /v\d+\.\d+[a-z]/
+jdk:
+  - openjdk8
+services:
+  - docker
+before_install:
+  - docker pull openjdk:8-jdk-alpine
+addons:
+  sonarcloud:
+    organization: "nonils"
+    token:
+      secure: "KUc4TnHnbBkO70p/Us/DvdZhXWyInsJP/7FEk9nhzUuqgQ8bdH0aV2l0a3ynTfnRg5yqKtj9j3cMlS8/MhTS1FW8zxoLF5Md2eqmh7g2e64VlaGCvb9ODl2unGkBHmqNHdpt+6hh1St+XfahCqdWljLZT9o6Q0cOI6XFiOhbeVy0GJFhmSUsOGtR9geMS86LupXMNIGTZRaMrw6CjRWauybLLt0tZtkUy1ERDc/zho7F1bfAHdmc0dXMwHhwcUnl9ghg5th4cu3yl+4HP7PKZYELis2Q5B3D4SaWyNtpptdmB4cYYLD70xQAfEe60DCyHoKQH9mSK4G5YcM5P2sZ4FCiAYgop74MiJRubVk4L87MtRvOATaevLNwiALtr5xBS4M8WIbr7PiVz1OuMc2DL2rZJoPOTuXZZ0KJTk2Tcs5/o0OJryiJelWOsVW13UOguu6g+TUjZ1sCg/Q3m7nKzZSc9Pxf9jgtWGld6btNRnWrr74qiYpzp2WRmOF8mSAAu4x0JLSm/5za24nW923DsE6A9T64o1bsHieMY/cELu/F2L/8D1MpSZt/pMYpBTeW9UpQolCqfZvzWIep5H/GDAyc0STaVuH2bBrkVO5IEdvJopk+VEufOikDVbDw++7vFG2OCgHBUEQcAs1WgDb1GnyWC591s//td4DNIilPHEU="
+
+script:
+  - sonar-scanner
+  - mvn test
+  - mvn clean package
+# Create Docker image for our app and push it to Dockerhub repository and send messages to the Teams channel after the `script` job is successfully executed
+after_success:
+  - mvn clean test jacoco:report coveralls:report
+  - export COMMIT=${TRAVIS_COMMIT::7}
+  - export TAG=`if [ ! -z "$TRAVIS_TAG" ]; then echo "$TRAVIS_TAG"; else echo "$TRAVIS_BRANCH--$COMMIT"; fi`
+  - docker login -u $DOCKER_USER -p $DOCKER_PASS
+  - docker-compose build
+  - docker tag $IMAGE_NAME:latest $IMAGE_NAME:$TAG
+  - docker push $IMAGE_NAME:$TAG
+  - export TITLE="$IMAGE_NAME:$TAG is built properly and pushed to Dockerhub"
+  - export TIMESTAMP=`date`
+  - export GIT_LOG=`git log -1 --pretty=%B $COMMIT`
+  - export TEXT="[build version] $TAG<br />[datetime] $TIMESTAMP<br />[changelog] $GIT_LOG<br />"
+  - chmod +x send_to_teams.sh && ./send_to_teams.sh
+# If the `script` job fails, it will send a failure message to Teams channel
+after_failure:
+  - export TITLE="Travis:$TRAVIS_JOB_ID -- build job is failed"
+  - export TEXT=[datetime]:`date`
