@@ -43,7 +43,7 @@ public class CellBuilder {
 		if (row == null || column == null || boardWithMines == null) {
 			throw new InvalidMinesweeperArgument("Missing argument to build board!");
 		}
-		List<Cell> neighbors = CellHelper.getNeighbors(boardWithMines, board.getLevel(), row, column);
+		List<Cell> neighbors = CellHelper.getNeighbors(boardWithMines, board.getColumns(), board.getRows(), row, column);
 		for (Cell neighbor : neighbors) {
 			if (neighbor.isMine()) {
 				mineNeighbors++;

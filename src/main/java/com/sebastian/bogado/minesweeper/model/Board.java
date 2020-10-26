@@ -29,23 +29,36 @@ public class Board {
 	private Boolean isGameFinished;
 	@Enumerated(EnumType.STRING)
 	private Level level;
+	private Integer columns;
+	private Integer rows;
+	private Integer mines;
 
 	public Board(Level level) {
 		if (Level.CUSTOM.equals(level)) {
 			throw new IllegalArgumentException("The custom level could not be used for create a new board with this constructor. Please, use the Board(Integer rows, Integer cols, Integer mines)");
 		}
 		this.level = level;
-		openToWin = (this.level.getColumns() * this.level.getRows()) - this.level.getMines();
-		generateBoard(this.level.getColumns(), this.level.getRows(), this.level.getMines());
+		this.columns = level.getColumns();
+		this.rows = level.getRows();
+		this.mines = level.getMines();
+		openToWin = (this.columns * this.rows) - this.mines;
+		this.cells = generateBoard();
+		this.isGameFinished = false;
 	}
 
 	public Board(Integer rows, Integer cols, Integer mines) {
-
+		this.level = Level.CUSTOM;
+		this.columns = cols;
+		this.rows = rows;
+		this.mines = mines;
+		openToWin = (this.columns * this.rows) - this.mines;
+		this.cells = generateBoard();
+		this.isGameFinished = false;
 	}
 
-	private List<Cell> generateBoard(Integer cols, Integer rows, Integer mines) {
-		Cell[][] elements = new Cell[cols][rows];
-		generateMines(cols, rows, mines, elements);
+	private List<Cell> generateBoard() {
+		Cell[][] elements = new Cell[this.columns][this.rows];
+		generateMines(elements);
 		fillBoard(elements);
 		List<Cell> boardCells = new ArrayList<>();
 		for (Cell[] cells : elements) {
@@ -55,28 +68,24 @@ public class Board {
 	}
 
 	private void fillBoard(Cell[][] elements) {
-		for (int col = 0;
-		     col < this.level.getColumns();
-		     col++) {
-			for (int row = 0;
-			     row < this.level.getRows();
-			     row++) {
+		for (int col = 0; col < this.columns; col++) {
+			for (int row = 0; row < this.rows; row++) {
 				if (elements[col][row] == null) {
-					Cell cell = CellBuilder.create().board(this).column(col).row(row).boardElements(elements).neighbors(this)
-							.build();
+					Cell cell = CellBuilder.create().board(this)
+							.column(col).row(row).boardElements(elements)
+							.neighbors(this).build();
 					elements[col][row] = cell;
 				}
 			}
 		}
-
 	}
 
-	private void generateMines(Integer cols, Integer rows, Integer mines, Cell[][] elements) {
-		Integer minesLeftToBeCreated = mines;
+	private void generateMines(Cell[][] elements) {
+		Integer minesLeftToBeCreated = this.mines;
 		ThreadLocalRandom randomizer = ThreadLocalRandom.current();
 		while (minesLeftToBeCreated > 0) {
-			Integer mineRow = randomizer.nextInt(rows);
-			Integer mineCol = randomizer.nextInt(cols);
+			Integer mineRow = randomizer.nextInt(this.rows);
+			Integer mineCol = randomizer.nextInt(this.columns);
 			if (elements[mineCol][mineRow] == null) {
 				Cell mine = MineBuilder.create().board(this).column(mineCol).row(mineRow).build();
 				elements[mineCol][mineRow] = mine;

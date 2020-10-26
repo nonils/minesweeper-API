@@ -29,7 +29,7 @@ public class MineBuilder {
 	}
 
 	public Cell build() {
-		return new Cell(board, column, Cell.MINE_VALUE, row);
+		return new Cell(board, row, column, Cell.MINE_VALUE );
 	}
 
 }
