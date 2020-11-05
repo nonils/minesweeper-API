@@ -89,7 +89,7 @@ public class MinesweeperServiceImpl implements MinesweeperService {
 			Hibernate.initialize(board.getCells());
 			initalizeCells(board);
 			Set<Cell> openCellsRecursive = openCellsRecursive(new HashSet<>(), cell);
-			Set<CellResponseDTO> returnedCells = openCellsRecursive.stream().map(c -> new CellResponseDTO(cell))
+			Set<CellResponseDTO> returnedCells = openCellsRecursive.stream().map(CellResponseDTO::new)
 					.collect(Collectors.toSet());
 			return returnedCells;
 		}
