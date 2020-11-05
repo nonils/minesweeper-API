@@ -31,17 +31,15 @@ public class MinesweeperServiceImpl implements MinesweeperService {
 	}
 
 	@Override
-	public Long createBoard(Level level) {
+	public Board createBoard(Level level) {
 		Board board = new Board(level);
-		board = boardRepository.save(board);
-		return board.getId();
+		return boardRepository.save(board);
 	}
 
 	@Override
-	public Long createBoard(Integer cols, Integer rows, Integer mines) {
+	public Board createBoard(Integer cols, Integer rows, Integer mines) {
 		Board board = new Board(rows, cols, mines);
-		board = boardRepository.save(board);
-		return board.getId();
+		return boardRepository.save(board);
 	}
 
 	@Override

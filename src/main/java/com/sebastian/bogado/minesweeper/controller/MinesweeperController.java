@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.util.Collections;
+
 @RestController
 @RequestMapping("/api/minesweeper")
 public class MinesweeperController {
@@ -41,14 +44,14 @@ public class MinesweeperController {
 			@ApiResponse(code = 201, message = "Created", response = Long.class),
 			@ApiResponse(code = 400, message = "Bad Request"), @ApiResponse(code = 500, message = "Failure")
 	})
-	public Long startGame(@RequestBody CreateGameRequest createGameRequest) {
+	public CellsOpenedDTO startGame(@RequestBody @Valid CreateGameRequest createGameRequest) {
 		if (!Level.CUSTOM.equals(createGameRequest.getLevel())) {
-			return minesweeperService.createBoard(createGameRequest.getLevel());
+			return  new CellsOpenedDTO(minesweeperService.createBoard(createGameRequest.getLevel()),Collections.emptySet());
 		}
 		validateCustomLevelRequest(createGameRequest);
-		return minesweeperService.createBoard(  createGameRequest.getColumns(),
-												createGameRequest.getRows(),
-												createGameRequest.getMines());
+		return new CellsOpenedDTO(minesweeperService.createBoard(createGameRequest.getColumns(),
+				createGameRequest.getRows(),
+				createGameRequest.getMines()), Collections.emptySet());
 	}
 
 	private void validateCustomLevelRequest(CreateGameRequest createGameRequest) {
