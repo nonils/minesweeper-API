@@ -140,7 +140,7 @@ public class MinesweeperServiceImpl implements MinesweeperService {
 	}
 
 	private Set<CellResponseDTO> getOpenedCells(Board board) {
-		return board.getCells().stream().filter(c -> c.getOpen()).map(c -> new CellResponseDTO(c))
+		return board.getCells().stream().filter(Cell::getOpen).map(CellResponseDTO::new)
 				.collect(Collectors.toSet());
 	}
 

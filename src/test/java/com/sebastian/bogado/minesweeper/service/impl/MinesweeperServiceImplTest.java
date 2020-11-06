@@ -52,7 +52,7 @@ class MinesweeperServiceImplTest {
 			generatedBoard.setId(1L);
 			return generatedBoard;
 		});
-		Assertions.assertEquals(1L, minesweeperService.createBoard(Level.BEGINNER));
+		Assertions.assertEquals(1L, minesweeperService.createBoard(Level.BEGINNER).getId());
 	}
 
 	@Test
@@ -62,7 +62,7 @@ class MinesweeperServiceImplTest {
 			generatedBoard.setId(1L);
 			return generatedBoard;
 		});
-		Assertions.assertEquals(1L, minesweeperService.createBoard(20, 20,9));
+		Assertions.assertEquals(1L, minesweeperService.createBoard(20, 20,9).getId());
 	}
 
 	@Test
