@@ -1,14 +1,11 @@
 package com.sebastian.bogado.minesweeper.exeptions;
 
-public class InexistantMinesweeperGame extends RuntimeException {
+import org.springframework.http.HttpStatus;
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = 1L;
+public class InexistantMinesweeperGame extends CustomException {
 
 	public InexistantMinesweeperGame() {
-		super("Couldn't find the game");
+		super("inexistant.minesweeper.game.message", null, "inexistant.minesweeper.game.description", null, HttpStatus.NOT_FOUND);
 	}
 
 }

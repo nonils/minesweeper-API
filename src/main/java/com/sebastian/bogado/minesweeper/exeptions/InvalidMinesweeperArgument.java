@@ -1,14 +1,11 @@
 package com.sebastian.bogado.minesweeper.exeptions;
 
-public class InvalidMinesweeperArgument extends RuntimeException {
+import org.springframework.http.HttpStatus;
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = 1L;
+public class InvalidMinesweeperArgument extends CustomException {
 
 	public InvalidMinesweeperArgument(String message) {
-		super(message);
+		super("invalid.minesweeper.argument.message", new String[]{message},"invalid.minesweeper.argument.description", null, HttpStatus.BAD_REQUEST);
 	}
 
 }
