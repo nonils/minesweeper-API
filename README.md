@@ -3,3 +3,5 @@
 
 
 Api client repo: https://github.com/nonils/minesweeper-cli
+
+Heroku app: https://sb-minesweeper.herokuapp.com
