@@ -21,18 +21,18 @@ public class MinesweeperController {
 	@Autowired
 	private MinesweeperService minesweeperService;
 
-	@GetMapping
+	@GetMapping("/{id}")
 	@ResponseStatus(HttpStatus.OK)
 	@ApiOperation(value = "resumeGame", nickname = "Resume game")
 	@ApiImplicitParams({
-			@ApiImplicitParam(name = "id", value = "Game id", required = true, dataType = "long", paramType = "query")
+			@ApiImplicitParam(name = "id", value = "Game id", required = true, dataType = "long", paramType = "path")
 	})
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Success", response = CellsOpenedDTO.class),
 			@ApiResponse(code = 400, message = "Bad Request"), @ApiResponse(code = 404, message = "Not Found"),
 			@ApiResponse(code = 500, message = "Failure")
 	})
-	public CellsOpenedDTO resumeGame(@RequestParam(name = "id") Long id) {
+	public CellsOpenedDTO resumeGame(@PathVariable(name = "id") Long id) {
 		CellsOpenedDTO board = minesweeperService.getBoard(id);
 		return board;
 	}
